@@ -20,7 +20,11 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
 
         seekBar = view.findViewById(R.id.seekBar)
 
-        mediaPlayer = MediaPlayer.create(requireContext(), R.raw.lofimusic)
+        mediaPlayer = MediaPlayer.create(requireContext(), R.raw.chillsound)
+
+        mediaPlayer?.let {
+            seekBar.max = it.duration
+        }
 
         view.findViewById<Button>(R.id.btnPlay).setOnClickListener {
             mediaPlayer?.start()
@@ -32,9 +36,22 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         }
 
         view.findViewById<Button>(R.id.btnStop).setOnClickListener {
-            mediaPlayer?.seekTo(0)
             mediaPlayer?.pause()
+            mediaPlayer?.seekTo(0)
+            seekBar.progress = 0
         }
+
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(sb: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    mediaPlayer?.seekTo(progress)
+                }
+            }
+
+            override fun onStartTrackingTouch(sb: SeekBar?) {}
+
+            override fun onStopTrackingTouch(sb: SeekBar?) {}
+        })
     }
 
     private fun updateSeekBar() {
